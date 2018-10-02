@@ -72,6 +72,7 @@ module.exports = {
     alias: {
       images: path.resolve(__dirname, '..', 'src/images'),
       services: path.resolve(__dirname, '..', 'src/services'),
+      adapters: path.resolve(__dirname, '..', 'src/adapters'),
       store: path.resolve(__dirname, '..', 'src/store'),
       views: path.resolve(__dirname, '..', 'src/views'),
       utils: path.resolve(__dirname, '..', 'src/utils'),

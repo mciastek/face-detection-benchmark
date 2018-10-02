@@ -1,6 +1,8 @@
 import 'normalize.css'
 import 'styles/main.scss'
 
+import { FaceApiAdapter } from 'adapters'
+
 import WebCamManager from 'services/WebCamManager'
 import FaceDetection from 'services/FaceDetection'
 import { register } from 'utils/sw'
@@ -10,16 +12,13 @@ class App {
     const video = document.getElementById('stream')
 
     this.webCam = new WebCamManager(video)
-    this.faceDetection = new FaceDetection(video)
+    this.faceDetection = new FaceDetection(video, FaceApiAdapter)
 
     this.init()
   }
 
   init () {
-    this.webCam
-      .capture()
-      .then(() => this.faceDetection.prepare())
-      .then(() => this.faceDetection.run())
+    this.webCam.capture().then(() => this.faceDetection.init())
   }
 }
 

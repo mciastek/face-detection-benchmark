@@ -1,55 +1,24 @@
-import * as faceapi from 'face-api.js/dist/face-api'
-
-const MIN_CONFIDENCE = 0.4
-
-const MTCNN_PARAMS = {
-  minFaceSize: 200
-}
-
 class FaceDetection {
-  constructor (videoEl) {
+  constructor (videoEl, Adapter) {
     this.videoEl = videoEl
-    this.loaded = false
+    this.adapter = new Adapter(this.videoEl)
+    this.running = false
   }
 
-  prepare () {
-    return faceapi.loadMtcnnModel('/')
+  init () {
+    return this.adapter.prepare().then(() => {
+      this.running = true
+      return this.run()
+    })
   }
 
   run = () => {
-    if (this.videoEl.paused || this.videoEl.ended) {
+    if (this.videoEl.paused || this.videoEl.ended || !this.running) {
       return
     }
 
-    this.process()
+    this.adapter.process()
     setTimeout(this.run)
-  }
-
-  async process () {
-    const { width, height } = faceapi.getMediaDimensions(this.videoEl)
-
-    const canvas = document.getElementById('overlay')
-    canvas.width = width
-    canvas.height = height
-
-    const { results, stats } = await faceapi.nets.mtcnn.forwardWithStats(
-      this.videoEl,
-      MTCNN_PARAMS
-    )
-
-    if (results) {
-      results.forEach(({ faceDetection, faceLandmarks }) => {
-        if (faceDetection.score < MIN_CONFIDENCE) {
-          return
-        }
-
-        faceapi.drawDetection(canvas, faceDetection.forSize(width, height))
-        faceapi.drawLandmarks(canvas, faceLandmarks.forSize(width, height), {
-          lineWidth: 4,
-          color: 'red'
-        })
-      })
-    }
   }
 }
 
