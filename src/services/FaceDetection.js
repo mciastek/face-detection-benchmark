@@ -6,7 +6,7 @@ const MTCNN_PARAMS = {
   minFaceSize: 200
 }
 
-class FaceRecognition {
+class FaceDetection {
   constructor (videoEl) {
     this.videoEl = videoEl
     this.loaded = false
@@ -53,4 +53,4 @@ class FaceRecognition {
   }
 }
 
-export default FaceRecognition
+export default FaceDetection
