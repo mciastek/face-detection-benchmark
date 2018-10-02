@@ -1,0 +1,106 @@
+@import '~styles/base/colors';
+@import '~styles/base/settings';
+
+//=======================
+// Core styles
+//=======================
+
+html {
+  font-size: 100%;
+}
+
+html,
+body {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+}
+
+body {
+  font-family: $base-font-family;
+  -webkit-font-smoothing: antialiased;
+  font-weight: 400;
+  line-height: 1.33;
+  color: $text;
+  background-color: $black;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+//=======================
+// Styles reset
+//=======================
+
+* {
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+}
+
+button {
+  font-size: remify(14px);
+  cursor: pointer;
+  background: none;
+  border: 0;
+
+  &:focus,
+  &:active {
+    outline: 0;
+  }
+}
+
+input,
+textarea,
+button,
+select {
+  font-family: $base-font-family;
+  border-radius: 0;
+  box-sizing: border-box;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+}
+
+a,
+input,
+textarea,
+select {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  outline: 0;
+
+  &:focus,
+  &:active {
+    outline: 0;
+  }
+}
+
+figure {
+  margin: 0;
+  padding: 0;
+}
+
+//=======================
+// Typography
+//=======================
+
+@for $i from 0 through 6 {
+  h#{$i} {
+    font-family: 'Open Sans', sans-serif;
+  }
+}
+
+//=======================
+// Scene
+//=======================
+
+#overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+}

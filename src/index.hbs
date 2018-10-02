@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <title>{{htmlWebpackPlugin.options.meta.TITLE}}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <meta name="description" content="{{htmlWebpackPlugin.options.meta.DESCRIPTION}}" />
+    <meta name="keywords" content="{{htmlWebpackPlugin.options.meta.KEYWORDS}}" />
+    <meta itemProp="name" content="{{htmlWebpackPlugin.options.meta.TITLE}}" />
+    <meta itemProp="description" content="{{htmlWebpackPlugin.options.meta.DESCRIPTION}}" />
+    <meta itemProp="image" content="{{htmlWebpackPlugin.options.meta.OG_COVER}}" />
+    <meta itemProp="url" content="{{htmlWebpackPlugin.options.meta.SITE_URL}}" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:site" content="{{htmlWebpackPlugin.options.meta.TWITTER_HANDLE}}" />
+    <meta name="twitter:title" content="{{htmlWebpackPlugin.options.meta.TITLE}}" />
+    <meta name="twitter:description" content="{{htmlWebpackPlugin.options.meta.DESCRIPTION}}" />
+    <meta name="twitter:image:src" content="{{htmlWebpackPlugin.options.meta.OG_COVER_TWITTER}}" />
+    <meta name="twitter:image:alt" content="{{htmlWebpackPlugin.options.meta.OG_COVER_ALT}}" />
+    <meta property="og:title" content="{{htmlWebpackPlugin.options.meta.TITLE}}" />
+    <meta property="og:description" content="{{htmlWebpackPlugin.options.meta.DESCRIPTION}}" />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="{{htmlWebpackPlugin.options.meta.SITE_URL}}" />
+    <meta property="og:image" content="{{htmlWebpackPlugin.options.meta.OG_COVER}}" />
+    <meta property="og:site_name" content="{{htmlWebpackPlugin.options.meta.TITLE}}" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#2d2d2d">
+    <script src="{{htmlWebpackPlugin.files.modernizr}}"></script>
+    {{#if htmlWebpackPlugin.options.GAKey}}
+      <script async src="https://www.googletagmanager.com/gtag/js?id={{htmlWebpackPlugin.options.GAKey}}"></script>
+      <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
+        gtag('config', '{{htmlWebpackPlugin.options.GAKey}}');
+      </script>
+    {{/if}}
+  </head>
+  <body>
+    <video id="stream"></video>
+    <canvas id="overlay"></canvas>
+  </body>
+</html>
