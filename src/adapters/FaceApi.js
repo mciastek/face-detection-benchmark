@@ -6,26 +6,44 @@ const MTCNN_PARAMS = {
   minFaceSize: 200
 }
 
+const getMediaSize = media => {
+  if (media instanceof HTMLVideoElement) {
+    return {
+      width: media.videoWidth,
+      height: media.videoHeight
+    }
+  }
+  return {
+    width: media.width,
+    height: media.height
+  }
+}
+
 class FaceApiAdapter {
-  constructor (videoEl) {
-    this.videoEl = videoEl
+  constructor (overlayEl) {
+    this.overlayEl = overlayEl
+    this.overlayCtx = this.overlayEl.getContext('2d')
   }
 
   prepare () {
     return faceapi.loadMtcnnModel('/')
   }
 
-  async process () {
-    const { width, height } = faceapi.getMediaDimensions(this.videoEl)
+  setOverlay (source) {
+    const { width, height } = getMediaSize(source)
+    this.overlayWidth = width
+    this.overlayHeight = height
+    this.overlayEl.width = this.overlayWidth
+    this.overlayEl.height = this.overlayHeight
+  }
 
-    const canvas = document.getElementById('overlay')
-    canvas.width = width
-    canvas.height = height
-
-    const { results, stats } = await faceapi.nets.mtcnn.forwardWithStats(
-      this.videoEl,
+  async process (source) {
+    const { results } = await faceapi.nets.mtcnn.forwardWithStats(
+      source,
       MTCNN_PARAMS
     )
+
+    this.overlayCtx.clearRect(0, 0, this.overlayWidth, this.overlayHeight)
 
     if (results) {
       results.forEach(({ faceDetection, faceLandmarks }) => {
@@ -33,11 +51,18 @@ class FaceApiAdapter {
           return
         }
 
-        faceapi.drawDetection(canvas, faceDetection.forSize(width, height))
-        faceapi.drawLandmarks(canvas, faceLandmarks.forSize(width, height), {
-          lineWidth: 4,
-          color: 'red'
-        })
+        faceapi.drawDetection(
+          this.overlayEl,
+          faceDetection.forSize(this.overlayWidth, this.overlayHeight)
+        )
+        faceapi.drawLandmarks(
+          this.overlayEl,
+          faceLandmarks.forSize(this.overlayWidth, this.overlayHeight),
+          {
+            lineWidth: 4,
+            color: 'red'
+          }
+        )
       })
     }
   }

@@ -9,16 +9,20 @@ import { register } from 'utils/sw'
 
 class App {
   constructor () {
-    const video = document.getElementById('stream')
+    this.videoEl = document.getElementById('stream')
+    this.overlayEl = document.getElementById('overlay')
 
-    this.webCam = new WebCamManager(video)
-    this.faceDetection = new FaceDetection(video, FaceApiAdapter)
+    this.webCam = new WebCamManager(this.videoEl)
+    this.faceDetection = new FaceDetection(FaceApiAdapter, this.overlayEl)
 
     this.init()
   }
 
   init () {
-    this.webCam.capture().then(() => this.faceDetection.init())
+    this.webCam
+      .capture()
+      .then(() => this.faceDetection.init())
+      .then(() => this.faceDetection.run(this.videoEl))
   }
 }
 
