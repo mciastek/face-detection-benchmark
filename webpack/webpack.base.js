@@ -97,8 +97,7 @@ module.exports = {
       filename: 'index.html',
       template: `${APP_DIR}/index.hbs`,
       production: PROD_ENV,
-      meta: metaData,
-      GAKey: process.env.GA_KEY
+      meta: metaData
     }),
     new HtmlWebpackInlineSVGPlugin({
       runPreEmit: true

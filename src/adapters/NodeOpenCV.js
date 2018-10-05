@@ -3,6 +3,13 @@ import io from 'socket.io-client'
 import Adapter from './Adapter'
 import { drawRect } from './utils'
 
+const DETECTION_OPTIONS = {
+  scaleFactor: 1.1,
+  minNeighbors: 10
+}
+
+const IMAGE_SCALE = 0.25
+
 class NodeOpenCVAdapter extends Adapter {
   constructor (overlayEl) {
     super(overlayEl)
@@ -27,6 +34,13 @@ class NodeOpenCVAdapter extends Adapter {
     })
   }
 
+  setOverlay (source) {
+    super.setOverlay(source)
+
+    this.pixelsCanvas.width = this.overlayWidth * IMAGE_SCALE
+    this.pixelsCanvas.height = this.overlayHeight * IMAGE_SCALE
+  }
+
   setListener () {
     this.socket.on('frame', this.handleFrameReceive)
   }
@@ -45,14 +59,23 @@ class NodeOpenCVAdapter extends Adapter {
 
   process (source) {
     const encodedPixels = this.getPixels(source)
-    this.socket.emit('frame', { data: encodedPixels })
+    this.socket.emit('frame', {
+      data: encodedPixels,
+      options: DETECTION_OPTIONS
+    })
   }
 
   handleFrameReceive = response => {
+    const { objects } = response
     this.overlayCtx.clearRect(0, 0, this.overlayWidth, this.overlayHeight)
 
-    response.objects.forEach(object => {
-      drawRect(this.overlayCtx, object)
+    objects.forEach(object => {
+      drawRect(this.overlayCtx, {
+        x: object.x / IMAGE_SCALE,
+        y: object.y / IMAGE_SCALE,
+        width: object.width / IMAGE_SCALE,
+        height: object.height / IMAGE_SCALE
+      })
     })
   }
 }
