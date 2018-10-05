@@ -19,7 +19,13 @@ module.exports = merge(base, {
     host: '0.0.0.0',
     historyApiFallback: true,
     disableHostCheck: true,
-    overlay: true
+    overlay: true,
+    proxy: {
+      '/ws': {
+        target: 'ws://localhost:3001',
+        ws: true
+      }
+    }
   },
   module: {
     rules: [

@@ -1,9 +1,9 @@
-import imageProcessor from '../services/image-processor'
+import { readStream } from '../services/image-processor'
 
-module.exports = (socket) => {
+export default function (socket) {
   socket.on('frame', ({ data }) => {
-    imageProcessor.readStream(data, (outputBuffer, coords) => {
-      socket.emit('frame', { buffer: outputBuffer, coords })
+    readStream(data, objects => {
+      socket.emit('frame', { objects })
     })
   })
 }

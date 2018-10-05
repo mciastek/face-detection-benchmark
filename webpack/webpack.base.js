@@ -105,8 +105,7 @@ module.exports = {
     }),
     new CopyWebpackPlugin([
       {
-        from: './src/public',
-        ignore: PROD_ENV ? ['three.js'] : undefined
+        from: './src/public'
       }
     ]),
     new ModernizrWebpackPlugin({

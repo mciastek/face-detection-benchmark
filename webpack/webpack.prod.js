@@ -80,9 +80,13 @@ module.exports = merge(base, {
     new ManifestPlugin({
       fileName: path.resolve(__dirname, '..', 'dist', 'rev-manifest.json')
     }),
-    new MinifyPlugin({}, {
-      comments: false
-    }),
+    new MinifyPlugin(
+      {},
+      {
+        comments: false,
+        exclude: /public/i
+      }
+    ),
     new ImageminPlugin({
       optipng: null,
       jpegtran: null,

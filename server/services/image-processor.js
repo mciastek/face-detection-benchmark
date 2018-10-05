@@ -1,53 +1,22 @@
-const cv = require('opencv');
+const cv = require('opencv4nodejs')
 
-const lowThresh = 100;
-const highThresh = 200;
-const nIters = 2;
-const minArea = 2000;
-
-const defaultRectProps = {
-  x: 0,
-  y: 0,
-  width: 0,
-  height: 0
-};
-
-function getRectangle(imgCanny) {
-  const contours = imgCanny.findContours()
-
-  for (let i = 0; i < contours.size(); i += 1) {
-    if (contours.area(i) < minArea) continue
-
-    const arcLength = contours.arcLength(i, true);
-    contours.approxPolyDP(i, 0.01 * arcLength, true);
-
-    if (contours.cornerCount(i) === 4) {
-      return contours.boundingRect(i);
-    }
-  }
-
-  return defaultRectProps;
+const OPTIONS = {
+  scaleFactor: 1.1,
+  minNeighbors: 10
 }
 
-function readCamStream(data, onStream) {
-  const base64String = data.split(',')[1];
-  cv.readImage(new Buffer(base64String, 'base64'), (err, img) => {
-    if (err) throw err;
+const classifier = new cv.CascadeClassifier(cv.HAAR_FRONTALFACE_ALT2)
 
-    const out = img.copy();
+const readCamStream = (data, onStream) => {
+  const base64String = data.replace('data:image/jpeg;base64', '')
+  const decoded = cv.imdecode(Buffer.from(base64String, 'base64'))
 
-    img.convertGrayscale();
+  const { objects, numDetections } = classifier.detectMultiScale(
+    decoded.bgrToGray(),
+    OPTIONS
+  )
 
-    const imgCanny = img.copy();
-    imgCanny.canny(lowThresh, highThresh);
-    imgCanny.dilate(nIters);
-
-    const rectProps = getRectangle(imgCanny);
-
-    onStream(out.toBuffer(), rectProps);
-  });
+  onStream(objects)
 }
 
-module.exports = {
-  readStream: readCamStream,
-};
+export const readStream = readCamStream
