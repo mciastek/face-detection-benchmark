@@ -64,6 +64,10 @@ module.exports = {
         options: {
           partialDirs: [path.resolve(__dirname, '..', 'src/components/ui')]
         }
+      },
+      {
+        test: require.resolve('tracking'),
+        use: 'imports-loader?this=>window'
       }
     ]
   },
@@ -111,6 +115,9 @@ module.exports = {
       filename: 'modernizr[hash]',
       noChunk: true,
       htmlWebpackPlugin: true
+    }),
+    new webpack.ProvidePlugin({
+      tracking: 'tracking'
     })
   ],
   optimization: {

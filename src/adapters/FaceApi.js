@@ -1,22 +1,11 @@
 import * as faceapi from 'face-api.js/dist/face-api'
 
+import { getMediaSize } from './utils'
+
 const MIN_CONFIDENCE = 0.4
 
 const MTCNN_PARAMS = {
   minFaceSize: 200
-}
-
-const getMediaSize = media => {
-  if (media instanceof HTMLVideoElement) {
-    return {
-      width: media.videoWidth,
-      height: media.videoHeight
-    }
-  }
-  return {
-    width: media.width,
-    height: media.height
-  }
 }
 
 class FaceApiAdapter {

@@ -1,21 +1,4 @@
-const getMediaSize = media => {
-  if (media instanceof HTMLVideoElement) {
-    return {
-      width: media.videoWidth,
-      height: media.videoHeight
-    }
-  }
-  return {
-    width: media.width,
-    height: media.height
-  }
-}
-
-const drawRect = (ctx, coords) => {
-  ctx.strokeStyle = '#ff0000'
-  ctx.lineWidth = 4
-  ctx.strokeRect(coords.x, coords.y, coords.width, coords.height)
-}
+import { getMediaSize, drawRect } from './utils'
 
 class NativeFaceDetectorAdapter {
   constructor (overlayEl) {

@@ -1,7 +1,7 @@
 import 'normalize.css'
 import 'styles/main.scss'
 
-import { FaceApiAdapter } from 'adapters'
+import { FaceApiAdapter, TrackingAdapter } from 'adapters'
 
 import WebCamManager from 'services/WebCamManager'
 import FaceDetection from 'services/FaceDetection'
@@ -13,7 +13,7 @@ class App {
     this.overlayEl = document.getElementById('overlay')
 
     this.webCam = new WebCamManager(this.videoEl)
-    this.faceDetection = new FaceDetection(FaceApiAdapter, this.overlayEl)
+    this.faceDetection = new FaceDetection(TrackingAdapter, this.overlayEl)
 
     this.init()
   }
