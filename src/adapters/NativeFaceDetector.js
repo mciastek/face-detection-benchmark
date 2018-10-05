@@ -1,9 +1,9 @@
-import { getMediaSize, drawRect } from './utils'
+import Adapter from './Adapter'
+import { drawRect } from './utils'
 
-class NativeFaceDetectorAdapter {
+class NativeFaceDetectorAdapter extends Adapter {
   constructor (overlayEl) {
-    this.overlayEl = overlayEl
-    this.overlayCtx = this.overlayEl.getContext('2d')
+    super(overlayEl)
 
     this.detector = null
   }
@@ -17,14 +17,6 @@ class NativeFaceDetectorAdapter {
         reject(error)
       }
     })
-  }
-
-  setOverlay (source) {
-    const { width, height } = getMediaSize(source)
-    this.overlayWidth = width
-    this.overlayHeight = height
-    this.overlayEl.width = this.overlayWidth
-    this.overlayEl.height = this.overlayHeight
   }
 
   async process (source) {

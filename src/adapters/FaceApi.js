@@ -1,6 +1,6 @@
 import * as faceapi from 'face-api.js/dist/face-api'
 
-import { getMediaSize } from './utils'
+import Adapter from './Adapter'
 
 const MIN_CONFIDENCE = 0.4
 
@@ -8,22 +8,9 @@ const MTCNN_PARAMS = {
   minFaceSize: 200
 }
 
-class FaceApiAdapter {
-  constructor (overlayEl) {
-    this.overlayEl = overlayEl
-    this.overlayCtx = this.overlayEl.getContext('2d')
-  }
-
+class FaceApiAdapter extends Adapter {
   prepare () {
     return faceapi.loadMtcnnModel('/')
-  }
-
-  setOverlay (source) {
-    const { width, height } = getMediaSize(source)
-    this.overlayWidth = width
-    this.overlayHeight = height
-    this.overlayEl.width = this.overlayWidth
-    this.overlayEl.height = this.overlayHeight
   }
 
   async process (source) {

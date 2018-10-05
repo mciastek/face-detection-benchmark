@@ -4,7 +4,8 @@ import 'tracking/build/data/face-min.js'
 import 'tracking/build/data/eye-min.js'
 import 'tracking/build/data/mouth-min.js'
 
-import { getMediaSize, drawRect } from './utils'
+import Adapter from './Adapter'
+import { drawRect } from './utils'
 
 const CLASSIFIERS = ['face', 'eye', 'mouth']
 
@@ -15,10 +16,9 @@ const defaults = {
   stepSize: 1
 }
 
-class TrackingAdapter {
+class TrackingAdapter extends Adapter {
   constructor (overlayEl) {
-    this.overlayEl = overlayEl
-    this.overlayCtx = this.overlayEl.getContext('2d')
+    super(overlayEl)
 
     this.pixelsCanvas = document.createElement('canvas')
     this.pixelsCanvasCtx = this.pixelsCanvas.getContext('2d')
@@ -74,14 +74,10 @@ class TrackingAdapter {
   }
 
   setOverlay (source) {
-    const { width, height } = getMediaSize(source)
-    this.overlayWidth = width
-    this.overlayHeight = height
-    this.overlayEl.width = this.overlayWidth
-    this.overlayEl.height = this.overlayHeight
+    super.setOverlay(source)
 
-    this.pixelsCanvas.width = width
-    this.pixelsCanvas.height = height
+    this.pixelsCanvas.width = this.overlayWidth
+    this.pixelsCanvas.height = this.overlayHeight
   }
 
   process (source) {
