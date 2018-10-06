@@ -63,6 +63,10 @@ class FaceDetection {
   changeAdapter (Adapter, adapterOptions = this.options.adapterOptions) {
     this.stop()
     this.adapter = new Adapter(this.overlayEl, adapterOptions)
+    this.init().then(() => {
+      this.adapter.setOverlay(this.source)
+      this.run(this.source)
+    })
   }
 }
 
