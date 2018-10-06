@@ -11,8 +11,8 @@ const DETECTION_OPTIONS = {
 const IMAGE_SCALE = 0.25
 
 class NodeOpenCVAdapter extends Adapter {
-  constructor (overlayEl) {
-    super(overlayEl)
+  constructor (overlayEl, settings) {
+    super(overlayEl, settings)
 
     this.pixelsCanvas = document.createElement('canvas')
     this.pixelsCanvasCtx = this.pixelsCanvas.getContext('2d')
@@ -58,6 +58,8 @@ class NodeOpenCVAdapter extends Adapter {
   }
 
   process (source) {
+    super.process()
+
     const encodedPixels = this.getPixels(source)
     this.socket.emit('frame', {
       data: encodedPixels,
@@ -67,7 +69,8 @@ class NodeOpenCVAdapter extends Adapter {
 
   handleFrameReceive = response => {
     const { objects } = response
-    this.overlayCtx.clearRect(0, 0, this.overlayWidth, this.overlayHeight)
+
+    this.options.onUpdate()
 
     objects.forEach(object => {
       drawRect(this.overlayCtx, {

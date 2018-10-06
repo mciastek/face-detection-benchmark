@@ -62,7 +62,7 @@ module.exports = {
         test: /\.hbs$/,
         loader: 'handlebars-loader',
         options: {
-          partialDirs: [path.resolve(__dirname, '..', 'src/components/ui')]
+          partialDirs: [path.resolve(__dirname, '..', 'src/templates')]
         }
       },
       {

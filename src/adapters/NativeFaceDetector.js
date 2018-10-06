@@ -2,8 +2,8 @@ import Adapter from './Adapter'
 import { drawRect } from './utils'
 
 class NativeFaceDetectorAdapter extends Adapter {
-  constructor (overlayEl) {
-    super(overlayEl)
+  constructor (overlayEl, settings) {
+    super(overlayEl, settings)
 
     this.detector = null
   }
@@ -20,9 +20,11 @@ class NativeFaceDetectorAdapter extends Adapter {
   }
 
   async process (source) {
+    super.process()
+
     const faces = await this.detector.detect(source)
 
-    this.overlayCtx.clearRect(0, 0, this.overlayWidth, this.overlayHeight)
+    this.options.onUpdate()
 
     faces.forEach(face => {
       const { width, height, top, left } = face.boundingBox

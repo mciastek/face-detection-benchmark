@@ -1,11 +1,28 @@
+import noop from 'lodash/noop'
+
 const isVideo = source => source.nodeName.toLowerCase() === 'video'
 
+const defaults = {
+  adapterOptions: {
+    onBeforeUpdate: noop,
+    onUpdate: noop
+  }
+}
+
 class FaceDetection {
-  constructor (Adapter, overlayEl) {
+  constructor (Adapter, overlayEl, settings) {
     this.overlayEl = overlayEl
-    this.adapter = new Adapter(this.overlayEl)
+    this.options = {
+      ...defaults,
+      ...settings
+    }
+
+    this.adapter = new Adapter(this.overlayEl, this.options.adapterOptions)
+
     this.source = null
     this.running = false
+
+    this.loopTimer = null
   }
 
   init () {
@@ -35,11 +52,17 @@ class FaceDetection {
     }
 
     this.adapter.process(this.source)
-    setTimeout(this.runInLoop)
+    this.loopTimer = setTimeout(this.runInLoop)
   }
 
   stop () {
+    clearTimeout(this.loopTimer)
     this.running = false
+  }
+
+  changeAdapter (Adapter, adapterOptions = this.options.adapterOptions) {
+    this.stop()
+    this.adapter = new Adapter(this.overlayEl, adapterOptions)
   }
 }
 

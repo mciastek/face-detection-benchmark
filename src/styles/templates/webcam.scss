@@ -1,0 +1,21 @@
+.webcam {
+  &__container {
+    position: relative;
+    width: 640px;
+    height: 480px;
+    margin: 0 auto;
+  }
+
+  &__video {
+    display: block;
+    width: 100%;
+    height: 100%;
+    background-color: color('grey', 'lighten-3');
+  }
+
+  &__overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+  }
+}

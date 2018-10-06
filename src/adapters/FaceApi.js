@@ -14,12 +14,14 @@ class FaceApiAdapter extends Adapter {
   }
 
   async process (source) {
+    super.process()
+
     const { results } = await faceapi.nets.mtcnn.forwardWithStats(
       source,
       MTCNN_PARAMS
     )
 
-    this.overlayCtx.clearRect(0, 0, this.overlayWidth, this.overlayHeight)
+    this.options.onUpdate()
 
     if (results) {
       results.forEach(({ faceDetection, faceLandmarks }) => {

@@ -17,8 +17,8 @@ const defaults = {
 }
 
 class TrackingAdapter extends Adapter {
-  constructor (overlayEl) {
-    super(overlayEl)
+  constructor (overlayEl, settings) {
+    super(overlayEl, settings)
 
     this.pixelsCanvas = document.createElement('canvas')
     this.pixelsCanvasCtx = this.pixelsCanvas.getContext('2d')
@@ -81,10 +81,12 @@ class TrackingAdapter extends Adapter {
   }
 
   process (source) {
+    super.process()
+
     const pixels = this.getPixels(source)
     const [face, eyes, mouth] = this.getResults(pixels)
 
-    this.overlayCtx.clearRect(0, 0, this.overlayWidth, this.overlayHeight)
+    this.options.onUpdate()
 
     face.forEach(coords => {
       drawRect(this.overlayCtx, coords)

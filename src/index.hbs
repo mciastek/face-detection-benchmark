@@ -41,7 +41,30 @@
     {{/if}}
   </head>
   <body>
-    <video id="stream"></video>
-    <canvas id="overlay"></canvas>
+    <header class="header">
+      <div class="container">
+        <h1>Face Detection Benchmark</h1>
+      </div>
+    </header>
+    <main>
+      <div class="container">
+        <div class="col s12">
+          <ul class="tabs js-tabs">
+            <li class="tab col s3">
+              <a href="#images-test">Images</a>
+            </li>
+            <li class="tab col s3">
+              <a class="active" href="#webcam-test">Webcam</a>
+            </li>
+          </ul>
+        </div>
+        <div class="col s12 tab-item" id="images-test">
+          {{> images-upload}}
+        </div>
+        <div class="col s12 tab-item" id="webcam-test">
+          {{> webcam}}
+        </div>
+      </div>
+    </main>
   </body>
 </html>

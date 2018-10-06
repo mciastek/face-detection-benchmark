@@ -16,6 +16,8 @@ class WebCamManager {
   constructor (videoEl) {
     this.videoEl = videoEl
     this.videoEl.addEventListener('loadedmetadata', this.handleVideoLoad)
+
+    this.track = null
   }
 
   capture () {
@@ -34,12 +36,19 @@ class WebCamManager {
     })
   }
 
+  stop () {
+    if (this.track) {
+      this.track.stop()
+    }
+  }
+
   handleVideoLoad = () => {
     this.videoEl.play()
   }
 
   handleStream = stream => {
     this.videoEl.srcObject = stream
+    this.track = stream.getTracks()[0]
   }
 
   handleCaptureError = error => {

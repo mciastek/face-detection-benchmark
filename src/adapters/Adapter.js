@@ -1,9 +1,21 @@
+import noop from 'lodash/noop'
+
 import { getMediaSize } from './utils'
 
+const defaults = {
+  onBeforeUpdate: noop,
+  onUpdate: noop
+}
+
 class Adapter {
-  constructor (overlayEl) {
+  constructor (overlayEl, settings) {
     this.overlayEl = overlayEl
     this.overlayCtx = this.overlayEl.getContext('2d')
+
+    this.options = {
+      ...defaults,
+      ...settings
+    }
   }
 
   setOverlay (source) {
@@ -12,6 +24,11 @@ class Adapter {
     this.overlayHeight = height
     this.overlayEl.width = this.overlayWidth
     this.overlayEl.height = this.overlayHeight
+  }
+
+  process () {
+    this.options.onBeforeUpdate()
+    this.overlayCtx.clearRect(0, 0, this.overlayWidth, this.overlayHeight)
   }
 }
 
