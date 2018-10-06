@@ -17,7 +17,7 @@ import FaceDetection from 'services/FaceDetection'
 import ImagesUpload from 'components/ImagesUpload'
 
 import { createFpsStats } from 'utils/stats'
-import { WebCamError, FaceDetectionError } from 'utils/errors'
+import { WebCamError, FaceDetectionError, UploadError } from 'utils/errors'
 import { register } from 'utils/sw'
 
 const DEFAULT_ERROR_MESSAGE = 'Something went wrong! Reload the page.'
@@ -152,7 +152,11 @@ class App {
   }
 
   showError (error) {
-    if (error instanceof WebCamError || error instanceof FaceDetectionError) {
+    if (
+      error instanceof WebCamError ||
+      error instanceof FaceDetectionError ||
+      error instanceof UploadError
+    ) {
       const message = error.message || DEFAULT_ERROR_MESSAGE
       return M.toast({ html: message, classes: 'rounded' })
     }

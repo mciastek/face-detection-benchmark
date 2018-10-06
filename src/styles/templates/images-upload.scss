@@ -1,4 +1,8 @@
 .images-upload {
+  &__preview {
+    min-height: 500px;
+  }
+
   &__figure {
     margin: 0;
     padding: 0;

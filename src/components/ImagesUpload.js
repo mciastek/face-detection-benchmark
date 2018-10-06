@@ -1,22 +1,41 @@
 import noop from 'lodash/noop'
 
 import FaceDetection from 'services/FaceDetection'
-import { FaceDetectionError } from 'utils/errors'
+import { FaceDetectionError, UploadError } from 'utils/errors'
 
 const defaults = {
+  maxFiles: 10,
+  maxDimensions: 600,
   onError: noop
 }
 
-const getPromisifiedImage = (src, containerEl) => {
+const isBiggerThan = (image, maxDimensions) => {
+  const width = Math.max(image.width, image.naturalWidth)
+  const height = Math.max(image.height, image.naturalHeight)
+
+  return Math.max(width, height) > maxDimensions
+}
+
+const getPromisifiedImage = (src, maxDimensions) => {
   const image = new Image()
 
   image.classList.add('images-upload__image')
 
   return new Promise((resolve, reject) => {
-    image.onload = () => resolve(image)
+    image.onload = () => {
+      if (isBiggerThan(image, maxDimensions)) {
+        reject(
+          new UploadError(
+            `Image exceeds maximum dimensions of ${maxDimensions}px`
+          )
+        )
+      } else {
+        resolve(image)
+      }
+    }
+
     image.onerror = error => reject(error)
     image.src = src
-    containerEl.appendChild(image)
   })
 }
 
@@ -60,7 +79,7 @@ class ImagesUpload {
     })
   }
 
-  renderPreview = src => {
+  renderPreview = image => {
     const figureEl = document.createElement('figure')
     const figCaptionEl = document.createElement('figcaption')
     const containerEl = document.createElement('div')
@@ -71,12 +90,13 @@ class ImagesUpload {
     overlayEl.classList.add('images-upload__overlay')
     containerEl.classList.add('images-upload__container')
 
+    containerEl.appendChild(image)
     containerEl.appendChild(overlayEl)
     figureEl.appendChild(containerEl)
     figureEl.appendChild(figCaptionEl)
     this.previewEl.appendChild(figureEl)
 
-    return getPromisifiedImage(src, containerEl)
+    return image
   }
 
   runDetection = (source, index) => {
@@ -128,14 +148,22 @@ class ImagesUpload {
   }
 
   handleFileUpload = event => {
+    const { maxFiles, maxDimensions } = this.options
     const { files } = event.target
     const promises = [...files].map(this.readFile)
+
+    if (files.length > maxFiles) {
+      return this.options.onError(
+        new UploadError(`Maxium files number is ${maxFiles}`)
+      )
+    }
 
     this.clearPreview()
 
     Promise.all(promises)
-      .then(urls => urls.map(this.renderPreview))
+      .then(urls => urls.map(url => getPromisifiedImage(url, maxDimensions)))
       .then(sources => Promise.all(sources))
+      .then(sources => sources.map(this.renderPreview))
       .then(sources => sources.map(this.runDetection))
       .catch(this.options.onError)
   }
