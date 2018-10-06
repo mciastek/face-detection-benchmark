@@ -13,6 +13,9 @@ import {
 
 import WebCamManager from 'services/WebCamManager'
 import FaceDetection from 'services/FaceDetection'
+
+import ImagesUpload from 'components/ImagesUpload'
+
 import { createFpsStats } from 'utils/stats'
 import { WebCamError, FaceDetectionError } from 'utils/errors'
 import { register } from 'utils/sw'
@@ -54,6 +57,10 @@ class App {
     this.activeTab = 'images-test'
     this.detectionAdapter = null
 
+    this.uploadComponent = new ImagesUpload({
+      onError: this.handleError
+    })
+
     this.initSelect()
     this.initTabs()
   }
@@ -61,9 +68,13 @@ class App {
   initTabs () {
     const tabsEl = document.querySelector('.js-tabs')
 
-    M.Tabs.init(tabsEl, {
+    const tabsInstance = M.Tabs.init(tabsEl, {
       onShow: this.handleTabShow
     })
+
+    const id = tabsInstance.$content[0].getAttribute('id')
+    this.activeTab = id
+    this.initCurrentTest()
   }
 
   initSelect () {
@@ -126,6 +137,17 @@ class App {
       this.webCamFaceDetection
         .changeAdapter(this.detectionAdapter)
         .catch(this.handleError)
+    } else if (this.activeTab === 'images-test') {
+      this.uploadComponent.changeAdapter(this.detectionAdapter)
+    }
+  }
+
+  initCurrentTest () {
+    if (this.activeTab === 'webcam-test') {
+      this.initVideo()
+    } else if (this.activeTab === 'images-test') {
+      this.stopVideo()
+      this.uploadComponent.changeAdapter(this.detectionAdapter)
     }
   }
 
@@ -141,12 +163,7 @@ class App {
   handleTabShow = activeTabEl => {
     const id = activeTabEl.getAttribute('id')
     this.activeTab = id
-
-    if (this.activeTab === 'webcam-test') {
-      this.initVideo()
-    } else if (this.activeTab === 'images-test') {
-      this.stopVideo()
-    }
+    this.initCurrentTest()
   }
 
   handleAdapterSelect = ({ target }) => {

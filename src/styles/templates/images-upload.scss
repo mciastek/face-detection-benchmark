@@ -1,0 +1,31 @@
+.images-upload {
+  &__figure {
+    margin: 0;
+    padding: 0;
+
+    &.loading .images-upload__image {
+      filter: grayscale(1);
+    }
+  }
+
+  &__container {
+    position: relative;
+  }
+
+  &__overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 2;
+  }
+
+  &__image {
+    display: block;
+    width: 100%;
+  }
+
+  &__caption {
+    height: 20px;
+    line-height: 20px;
+  }
+}
