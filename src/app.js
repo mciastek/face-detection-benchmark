@@ -14,7 +14,10 @@ import {
 import WebCamManager from 'services/WebCamManager'
 import FaceDetection from 'services/FaceDetection'
 import { createFpsStats } from 'utils/stats'
+import { WebCamError, FaceDetectionError } from 'utils/errors'
 import { register } from 'utils/sw'
+
+const DEFAULT_ERROR_MESSAGE = 'Something went wrong! Reload the page.'
 
 const DETECTION_ADAPTERS = [
   {
@@ -82,6 +85,59 @@ class App {
     M.FormSelect.init(selectEl)
   }
 
+  initVideo () {
+    const videoEl = document.getElementById('stream')
+    const overlayEl = document.getElementById('overlay')
+    const videoContainer = videoEl.parentElement
+
+    this.webCam = new WebCamManager(videoEl)
+    this.webCamFaceDetection = new FaceDetection(
+      this.detectionAdapter,
+      overlayEl,
+      {
+        adapterOptions: {
+          onUpdate: this.handleWebCamUpdate
+        }
+      }
+    )
+
+    if (!this.webCamStats) {
+      this.webCamStats = createFpsStats(videoContainer)
+    }
+
+    this.webCam
+      .capture()
+      .then(() => this.webCamFaceDetection.init())
+      .then(() => this.webCamFaceDetection.run(videoEl))
+      .catch(this.handleError)
+  }
+
+  stopVideo () {
+    if (this.webCam) {
+      this.webCam.stop()
+      this.webCamFaceDetection.stop()
+    }
+  }
+
+  updateAdapter (adapter) {
+    this.detectionAdapter = adapter
+
+    if (this.activeTab === 'webcam-test') {
+      this.webCamFaceDetection
+        .changeAdapter(this.detectionAdapter)
+        .catch(this.handleError)
+    }
+  }
+
+  showError (error) {
+    if (error instanceof WebCamError || error instanceof FaceDetectionError) {
+      const message = error.message || DEFAULT_ERROR_MESSAGE
+      return M.toast({ html: message, classes: 'rounded' })
+    }
+
+    console.error(error)
+  }
+
   handleTabShow = activeTabEl => {
     const id = activeTabEl.getAttribute('id')
     this.activeTab = id
@@ -110,45 +166,8 @@ class App {
     }
   }
 
-  initVideo () {
-    const videoEl = document.getElementById('stream')
-    const overlayEl = document.getElementById('overlay')
-    const videoContainer = videoEl.parentElement
-
-    this.webCam = new WebCamManager(videoEl)
-    this.webCamFaceDetection = new FaceDetection(
-      this.detectionAdapter,
-      overlayEl,
-      {
-        adapterOptions: {
-          onUpdate: this.handleWebCamUpdate
-        }
-      }
-    )
-
-    if (!this.webCamStats) {
-      this.webCamStats = createFpsStats(videoContainer)
-    }
-
-    this.webCam
-      .capture()
-      .then(() => this.webCamFaceDetection.init())
-      .then(() => this.webCamFaceDetection.run(videoEl))
-  }
-
-  stopVideo () {
-    if (this.webCam) {
-      this.webCam.stop()
-      this.webCamFaceDetection.stop()
-    }
-  }
-
-  updateAdapter (adapter) {
-    this.detectionAdapter = adapter
-
-    if (this.activeTab === 'webcam-test') {
-      this.webCamFaceDetection.changeAdapter(this.detectionAdapter)
-    }
+  handleError = error => {
+    this.showError(error)
   }
 }
 

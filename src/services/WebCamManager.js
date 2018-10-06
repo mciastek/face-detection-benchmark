@@ -1,6 +1,8 @@
+import { WebCamError } from 'utils/errors'
+
 const getUserMedia = settings => {
   if (!navigator.getUserMedia || !navigator.mediaDevices) {
-    throw new Error('Web cam streaming is not supported!')
+    throw new WebCamError('Web cam streaming is not supported!')
   }
 
   if (navigator.mediaDevices) {
@@ -21,19 +23,20 @@ class WebCamManager {
   }
 
   capture () {
-    getUserMedia({ video: {} })
-      .then(this.handleStream)
-      .catch(this.handleCaptureError)
-
-    return new Promise((resolve, reject) => {
+    const promise = new Promise((resolve, reject) => {
       this.videoEl.onplay = () => {
         resolve()
       }
 
-      this.videoEl.onerror = () => {
-        reject(new Error('Failed'))
+      this.videoEl.onerror = error => {
+        reject(new WebCamError(error.message))
       }
     })
+
+    return getUserMedia({ video: {} })
+      .then(this.handleStream)
+      .then(() => promise)
+      .catch(this.handleCaptureError)
   }
 
   stop () {
@@ -52,7 +55,7 @@ class WebCamManager {
   }
 
   handleCaptureError = error => {
-    console.error(error)
+    throw new WebCamError(error.message)
   }
 }
 

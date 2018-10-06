@@ -1,5 +1,7 @@
 import noop from 'lodash/noop'
 
+import { FaceDetectionError } from 'utils/errors'
+
 const isVideo = source => source.nodeName.toLowerCase() === 'video'
 
 const defaults = {
@@ -26,7 +28,7 @@ class FaceDetection {
   }
 
   init () {
-    return this.adapter.prepare()
+    return this.adapter.prepare().catch(this.handleDetectionError)
   }
 
   run = source => {
@@ -63,10 +65,17 @@ class FaceDetection {
   changeAdapter (Adapter, adapterOptions = this.options.adapterOptions) {
     this.stop()
     this.adapter = new Adapter(this.overlayEl, adapterOptions)
-    this.init().then(() => {
-      this.adapter.setOverlay(this.source)
-      this.run(this.source)
-    })
+
+    return this.init()
+      .then(() => {
+        this.adapter.setOverlay(this.source)
+        this.run(this.source)
+      })
+      .catch(this.handleDetectionError)
+  }
+
+  handleDetectionError = error => {
+    throw new FaceDetectionError(error.message)
   }
 }
 
