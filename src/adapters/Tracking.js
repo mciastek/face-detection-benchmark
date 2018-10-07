@@ -1,13 +1,11 @@
 import tracking from 'tracking'
 
 import 'tracking/build/data/face-min.js'
-import 'tracking/build/data/eye-min.js'
-import 'tracking/build/data/mouth-min.js'
 
 import Adapter from './Adapter'
 import { drawRect } from './utils'
 
-const CLASSIFIERS = ['face', 'eye', 'mouth']
+const CLASSIFIERS = ['face']
 
 const defaults = {
   edgesDensity: 0.1,
@@ -84,21 +82,13 @@ class TrackingAdapter extends Adapter {
     super.process()
 
     const pixels = this.getPixels(source)
-    const [face, eyes, mouth] = this.getResults(pixels)
+    const [face] = this.getResults(pixels)
 
     this.options.onUpdate()
 
     face.forEach(coords => {
       drawRect(this.overlayCtx, coords, this.drawOptions)
     })
-
-    // eyes.forEach(coords => {
-    //   drawRect(this.overlayCtx, coords, '#00ff00')
-    // })
-
-    // mouth.forEach(coords => {
-    //   drawRect(this.overlayCtx, coords, '#0000ff')
-    // })
   }
 }
 
