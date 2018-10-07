@@ -29,12 +29,16 @@ class NativeFaceDetectorAdapter extends Adapter {
     faces.forEach(face => {
       const { width, height, top, left } = face.boundingBox
 
-      drawRect(this.overlayCtx, {
-        x: left,
-        y: top,
-        width,
-        height
-      })
+      drawRect(
+        this.overlayCtx,
+        {
+          x: left,
+          y: top,
+          width,
+          height
+        },
+        this.drawOptions
+      )
     })
   }
 }

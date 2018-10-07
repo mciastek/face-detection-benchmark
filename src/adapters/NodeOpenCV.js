@@ -73,12 +73,16 @@ class NodeOpenCVAdapter extends Adapter {
     this.options.onUpdate()
 
     objects.forEach(object => {
-      drawRect(this.overlayCtx, {
-        x: object.x / IMAGE_SCALE,
-        y: object.y / IMAGE_SCALE,
-        width: object.width / IMAGE_SCALE,
-        height: object.height / IMAGE_SCALE
-      })
+      drawRect(
+        this.overlayCtx,
+        {
+          x: object.x / IMAGE_SCALE,
+          y: object.y / IMAGE_SCALE,
+          width: object.width / IMAGE_SCALE,
+          height: object.height / IMAGE_SCALE
+        },
+        this.drawOptions
+      )
     })
   }
 }

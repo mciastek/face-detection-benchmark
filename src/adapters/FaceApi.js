@@ -31,8 +31,13 @@ class FaceApiAdapter extends Adapter {
 
         faceapi.drawDetection(
           this.overlayEl,
-          faceDetection.forSize(this.overlayWidth, this.overlayHeight)
+          faceDetection.forSize(this.overlayWidth, this.overlayHeight),
+          {
+            ...this.drawOptions,
+            withScore: false
+          }
         )
+
         faceapi.drawLandmarks(
           this.overlayEl,
           faceLandmarks.forSize(this.overlayWidth, this.overlayHeight),

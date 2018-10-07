@@ -16,6 +16,11 @@ class Adapter {
       ...defaults,
       ...settings
     }
+
+    this.drawOptions = {
+      boxColor: this.options.boxColor,
+      lineWidth: this.options.lineWidth
+    }
   }
 
   setOverlay (source) {

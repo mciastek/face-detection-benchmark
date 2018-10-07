@@ -26,24 +26,40 @@ const DETECTION_ADAPTERS = [
   {
     name: 'face-api',
     label: 'face-api.js',
-    adapter: FaceApiAdapter
+    adapter: FaceApiAdapter,
+    color: '#fb8c00'
   },
   {
     name: 'tracking',
     label: 'tracking.js',
-    adapter: TrackingAdapter
+    adapter: TrackingAdapter,
+    color: '#ff5722'
   },
   {
     name: 'native',
     label: 'Native Detector',
-    adapter: NativeFaceDetectorAdapter
+    adapter: NativeFaceDetectorAdapter,
+    color: '#03a9f4'
   },
   {
     name: 'opencv',
     label: 'Node.js + OpenCV',
-    adapter: NodeOpenCVAdapter
+    adapter: NodeOpenCVAdapter,
+    color: '#9c27b0'
   }
 ]
+
+const getOptionIcon = color => {
+  const content = [
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40">',
+    `<circle cx="20" cy="20" r="20" fill="${color}" />`,
+    '</svg>'
+  ]
+    .map(encodeURIComponent)
+    .join('')
+
+  return `data:image/svg+xml,${content}`
+}
 
 const getCurrentAdapter = selectEl => {
   const element = selectEl || document.querySelector('.js-select')
@@ -56,6 +72,9 @@ class App {
   constructor () {
     this.activeTab = 'images-test'
     this.detectionAdapter = null
+    this.detectionAdapterOptions = {
+      lineWidth: 4
+    }
 
     this.uploadComponent = new ImagesUpload({
       onError: this.handleError
@@ -82,16 +101,19 @@ class App {
     selectEl.addEventListener('change', this.handleAdapterSelect)
 
     DETECTION_ADAPTERS.forEach((adapterConfig, index) => {
+      const { name, label, color } = adapterConfig
       const optionEl = document.createElement('option')
-      optionEl.value = adapterConfig.name
-      optionEl.innerText = adapterConfig.label
+      optionEl.value = name
+      optionEl.innerText = label
       optionEl.selected = index === 0
+      optionEl.setAttribute('data-icon', getOptionIcon(color))
 
       selectEl.appendChild(optionEl)
     })
 
-    const { adapter } = getCurrentAdapter(selectEl)
+    const { adapter, color } = getCurrentAdapter(selectEl)
     this.detectionAdapter = adapter
+    this.detectionAdapterOptions.boxColor = color
 
     M.FormSelect.init(selectEl)
   }
@@ -107,6 +129,7 @@ class App {
       overlayEl,
       {
         adapterOptions: {
+          ...this.detectionAdapterOptions,
           onUpdate: this.handleWebCamUpdate
         }
       }
@@ -130,24 +153,37 @@ class App {
     }
   }
 
-  updateAdapter (adapter) {
-    this.detectionAdapter = adapter
-
-    if (this.activeTab === 'webcam-test') {
-      this.webCamFaceDetection
-        .changeAdapter(this.detectionAdapter)
-        .catch(this.handleError)
-    } else if (this.activeTab === 'images-test') {
-      this.uploadComponent.changeAdapter(this.detectionAdapter)
-    }
-  }
-
   initCurrentTest () {
     if (this.activeTab === 'webcam-test') {
       this.initVideo()
     } else if (this.activeTab === 'images-test') {
       this.stopVideo()
-      this.uploadComponent.changeAdapter(this.detectionAdapter)
+      this.uploadComponent.changeAdapter(
+        this.detectionAdapter,
+        this.detectionAdapterOptions
+      )
+    }
+  }
+
+  updateAdapter (adapter, options) {
+    this.detectionAdapter = adapter
+    this.detectionAdapterOptions = {
+      ...this.detectionAdapterOptions,
+      ...options
+    }
+
+    if (this.activeTab === 'webcam-test') {
+      this.webCamFaceDetection
+        .changeAdapter(this.detectionAdapter, {
+          ...this.detectionAdapterOptions,
+          onUpdate: this.handleWebCamUpdate
+        })
+        .catch(this.handleError)
+    } else if (this.activeTab === 'images-test') {
+      this.uploadComponent.changeAdapter(
+        this.detectionAdapter,
+        this.detectionAdapterOptions
+      )
     }
   }
 
@@ -171,8 +207,12 @@ class App {
   }
 
   handleAdapterSelect = ({ target }) => {
-    const { adapter } = getCurrentAdapter(target)
-    this.updateAdapter(adapter)
+    const { adapter, color } = getCurrentAdapter(target)
+    const options = {
+      boxColor: color
+    }
+
+    this.updateAdapter(adapter, options)
   }
 
   handleWebCamBeforeUpdate = () => {

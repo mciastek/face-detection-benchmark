@@ -89,7 +89,7 @@ class TrackingAdapter extends Adapter {
     this.options.onUpdate()
 
     face.forEach(coords => {
-      drawRect(this.overlayCtx, coords)
+      drawRect(this.overlayCtx, coords, this.drawOptions)
     })
 
     // eyes.forEach(coords => {
