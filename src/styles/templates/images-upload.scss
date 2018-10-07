@@ -1,6 +1,8 @@
 .images-upload {
   &__preview {
     min-height: 500px;
+    padding: 1.5rem;
+    background-color: color('grey', 'lighten-4');
   }
 
   &__figure {

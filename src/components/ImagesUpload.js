@@ -63,8 +63,9 @@ class ImagesUpload {
     this.fileInput.addEventListener('change', this.handleFileUpload)
   }
 
-  changeAdapter (adapter) {
+  changeAdapter (adapter, options) {
     this.detectionAdapter = adapter
+    this.detectionAdapterOptions = options
     return this.rerunDetections()
   }
 
@@ -113,6 +114,7 @@ class ImagesUpload {
 
     const controller = new FaceDetection(this.detectionAdapter, overlayEl, {
       adapterOptions: {
+        ...this.detectionAdapterOptions,
         onBeforeUpdate: () => {
           detection.start = Date.now()
         },

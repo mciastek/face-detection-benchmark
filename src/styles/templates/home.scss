@@ -1,3 +1,28 @@
+.header {
+  &__container {
+    height: 100%;
+  }
+
+  &__input.input-field {
+    margin-top: 10px;
+  }
+
+  .select-wrapper input.select-dropdown {
+    margin: 0;
+    color: color('shades', 'white');
+    border-bottom: 0;
+  }
+
+  .select-wrapper .caret {
+    fill: color('shades', 'white');
+  }
+}
+
+.brand-logo {
+  margin: 0;
+  line-height: inherit;
+}
+
 .tab-item {
   padding: 48px 0;
 }

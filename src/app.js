@@ -37,13 +37,13 @@ const DETECTION_ADAPTERS = [
   },
   {
     name: 'native',
-    label: 'Native Detector',
+    label: 'Native',
     adapter: NativeFaceDetectorAdapter,
     color: '#03a9f4'
   },
   {
     name: 'opencv',
-    label: 'Node.js + OpenCV',
+    label: 'OpenCV',
     adapter: NodeOpenCVAdapter,
     color: '#9c27b0'
   }
