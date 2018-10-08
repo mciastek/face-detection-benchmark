@@ -4,11 +4,11 @@ import Adapter from './Adapter'
 import { drawRect } from './utils'
 
 const DETECTION_OPTIONS = {
-  scaleFactor: 1.1,
-  minNeighbors: 10
+  scaleFactor: 1.2,
+  minNeighbors: 6
 }
 
-const IMAGE_SCALE = 0.25
+const MAX_WIDTH = 160
 
 class NodeOpenCVAdapter extends Adapter {
   constructor (overlayEl, settings) {
@@ -18,6 +18,7 @@ class NodeOpenCVAdapter extends Adapter {
     this.pixelsCanvasCtx = this.pixelsCanvas.getContext('2d')
 
     this.socket = null
+    this.scale = 1
   }
 
   prepare () {
@@ -37,8 +38,10 @@ class NodeOpenCVAdapter extends Adapter {
   setOverlay (source) {
     super.setOverlay(source)
 
-    this.pixelsCanvas.width = this.overlayWidth * IMAGE_SCALE
-    this.pixelsCanvas.height = this.overlayHeight * IMAGE_SCALE
+    this.scale = MAX_WIDTH / this.overlayWidth
+
+    this.pixelsCanvas.width = this.overlayWidth * this.scale
+    this.pixelsCanvas.height = this.overlayHeight * this.scale
   }
 
   setListener () {
@@ -76,10 +79,10 @@ class NodeOpenCVAdapter extends Adapter {
       drawRect(
         this.overlayCtx,
         {
-          x: object.x / IMAGE_SCALE,
-          y: object.y / IMAGE_SCALE,
-          width: object.width / IMAGE_SCALE,
-          height: object.height / IMAGE_SCALE
+          x: object.x / this.scale,
+          y: object.y / this.scale,
+          width: object.width / this.scale,
+          height: object.height / this.scale
         },
         this.drawOptions
       )

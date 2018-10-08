@@ -11,8 +11,10 @@ const defaults = {
   edgesDensity: 0.1,
   initialScale: 4,
   scaleFactor: 1.25,
-  stepSize: 2
+  stepSize: 1.5
 }
+
+const MAX_WIDTH = 320
 
 class TrackingAdapter extends Adapter {
   constructor (overlayEl, settings) {
@@ -22,6 +24,7 @@ class TrackingAdapter extends Adapter {
     this.pixelsCanvasCtx = this.pixelsCanvas.getContext('2d')
 
     this.classifiers = []
+    this.scale = 1
   }
 
   prepare () {
@@ -60,8 +63,8 @@ class TrackingAdapter extends Adapter {
     return this.classifiers.map(classifier =>
       tracking.ViolaJones.detect(
         pixels,
-        this.overlayWidth,
-        this.overlayHeight,
+        this.pixelsCanvas.width,
+        this.pixelsCanvas.height,
         defaults.initialScale,
         defaults.scaleFactor,
         defaults.stepSize,
@@ -74,8 +77,10 @@ class TrackingAdapter extends Adapter {
   setOverlay (source) {
     super.setOverlay(source)
 
-    this.pixelsCanvas.width = this.overlayWidth
-    this.pixelsCanvas.height = this.overlayHeight
+    this.scale = MAX_WIDTH / this.overlayWidth
+
+    this.pixelsCanvas.width = this.overlayWidth * this.scale
+    this.pixelsCanvas.height = this.overlayHeight * this.scale
   }
 
   process (source) {
@@ -87,7 +92,16 @@ class TrackingAdapter extends Adapter {
     this.options.onUpdate()
 
     face.forEach(coords => {
-      drawRect(this.overlayCtx, coords, this.drawOptions)
+      drawRect(
+        this.overlayCtx,
+        {
+          x: coords.x / this.scale,
+          y: coords.y / this.scale,
+          width: coords.width / this.scale,
+          height: coords.height / this.scale
+        },
+        this.drawOptions
+      )
     })
   }
 }
