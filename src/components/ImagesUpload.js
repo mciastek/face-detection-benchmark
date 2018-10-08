@@ -47,6 +47,7 @@ class ImagesUpload {
   constructor (settings) {
     this.previewEl = document.querySelector('.js-images-preview')
     this.fileInput = document.querySelector('.js-images-upload')
+    this.buttonEl = document.querySelector('.js-run-detections')
 
     this.options = {
       ...defaults,
@@ -61,6 +62,7 @@ class ImagesUpload {
 
   attachListeners () {
     this.fileInput.addEventListener('change', this.handleFileUpload)
+    this.buttonEl.addEventListener('click', this.handleButtonClick)
   }
 
   changeAdapter (adapter, options) {
@@ -168,6 +170,10 @@ class ImagesUpload {
       .then(sources => sources.map(this.renderPreview))
       .then(sources => sources.map(this.runDetection))
       .catch(this.options.onError)
+  }
+
+  handleButtonClick = () => {
+    this.rerunDetections()
   }
 }
 
