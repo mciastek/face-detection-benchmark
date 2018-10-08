@@ -3,6 +3,7 @@ import 'styles/main.scss'
 
 import M from 'materialize-css'
 import find from 'lodash/find'
+import clone from 'lodash/clone'
 
 import {
   FaceApiAdapter,
@@ -27,25 +28,29 @@ const DETECTION_ADAPTERS = [
     name: 'face-api',
     label: 'face-api.js',
     adapter: FaceApiAdapter,
-    color: '#fb8c00'
+    color: '#fb8c00',
+    active: true
   },
   {
     name: 'tracking',
     label: 'tracking.js',
     adapter: TrackingAdapter,
-    color: '#ff5722'
+    color: '#ff5722',
+    active: false
   },
   {
     name: 'native',
     label: 'Native',
     adapter: NativeFaceDetectorAdapter,
-    color: '#03a9f4'
+    color: '#03a9f4',
+    active: false
   },
   {
     name: 'opencv',
     label: 'OpenCV',
     adapter: NodeOpenCVAdapter,
-    color: '#9c27b0'
+    color: '#9c27b0',
+    active: false
   }
 ]
 
@@ -61,16 +66,12 @@ const getOptionIcon = color => {
   return `data:image/svg+xml,${content}`
 }
 
-const getCurrentAdapter = selectEl => {
-  const element = selectEl || document.querySelector('.js-select')
-  const selected = element.selectedOptions[0].value
-
-  return find(DETECTION_ADAPTERS, ['name', selected])
-}
-
 class App {
   constructor () {
     this.activeTab = 'images-test'
+
+    this.adapters = clone(DETECTION_ADAPTERS)
+
     this.detectionAdapter = null
     this.detectionAdapterOptions = {
       lineWidth: 4
@@ -82,6 +83,10 @@ class App {
 
     this.initSelect()
     this.initTabs()
+  }
+
+  get currentAdapterConfig () {
+    return find(this.adapters, 'active')
   }
 
   initTabs () {
@@ -100,18 +105,18 @@ class App {
     const selectEl = document.querySelector('.js-select')
     selectEl.addEventListener('change', this.handleAdapterSelect)
 
-    DETECTION_ADAPTERS.forEach((adapterConfig, index) => {
-      const { name, label, color } = adapterConfig
+    this.adapters.forEach(config => {
+      const { name, label, color, active } = config
       const optionEl = document.createElement('option')
       optionEl.value = name
       optionEl.innerText = label
-      optionEl.selected = index === 0
+      optionEl.selected = active
       optionEl.setAttribute('data-icon', getOptionIcon(color))
 
       selectEl.appendChild(optionEl)
     })
 
-    const { adapter, color } = getCurrentAdapter(selectEl)
+    const { adapter, color } = this.currentAdapterConfig
     this.detectionAdapter = adapter
     this.detectionAdapterOptions.boxColor = color
 
@@ -207,7 +212,14 @@ class App {
   }
 
   handleAdapterSelect = ({ target }) => {
-    const { adapter, color } = getCurrentAdapter(target)
+    const selected = target.selectedOptions[0].value
+
+    this.adapters = this.adapters.map(config => ({
+      ...config,
+      active: config.name === selected
+    }))
+
+    const { adapter, color } = this.currentAdapterConfig
     const options = {
       boxColor: color
     }

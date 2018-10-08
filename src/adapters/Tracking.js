@@ -11,7 +11,7 @@ const defaults = {
   edgesDensity: 0.1,
   initialScale: 4,
   scaleFactor: 1.25,
-  stepSize: 1
+  stepSize: 2
 }
 
 class TrackingAdapter extends Adapter {
