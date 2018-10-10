@@ -68,7 +68,7 @@ class ImagesUpload {
   changeAdapter (adapter, options) {
     this.detectionAdapter = adapter
     this.detectionAdapterOptions = options
-    return this.rerunDetections()
+    return this.rerunDetections(true)
   }
 
   readFile = file => {
@@ -129,6 +129,8 @@ class ImagesUpload {
       }
     })
 
+    detection.controller = controller
+
     return controller
       .init()
       .then(() => controller.run(source))
@@ -136,13 +138,25 @@ class ImagesUpload {
   }
 
   clearPreview () {
+    this.stopDetections()
     this.previewEl.innerHTML = ''
   }
 
-  rerunDetections () {
-    const promises = this.detections.map(({ source }, index) => {
+  stopDetections () {
+    this.detections.forEach(detection => {
+      detection.controller.stop()
+    })
+  }
+
+  rerunDetections (restart) {
+    const promises = this.detections.map(({ controller, source }, index) => {
       if (source) {
-        return this.runDetection(source, index)
+        if (restart) {
+          controller.stop()
+          return this.runDetection(source, index)
+        }
+
+        return controller.run(source, index)
       }
 
       return Promise.reject(new FaceDetectionError('Source is not found'))

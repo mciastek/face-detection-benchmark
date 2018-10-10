@@ -35,6 +35,8 @@ class Adapter {
     this.options.onBeforeUpdate()
     this.overlayCtx.clearRect(0, 0, this.overlayWidth, this.overlayHeight)
   }
+
+  dispose () {}
 }
 
 export default Adapter

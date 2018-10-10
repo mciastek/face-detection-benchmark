@@ -160,6 +160,7 @@ class App {
 
   initCurrentTest () {
     if (this.activeTab === 'webcam-test') {
+      this.uploadComponent.stopDetections()
       this.initVideo()
     } else if (this.activeTab === 'images-test') {
       this.stopVideo()

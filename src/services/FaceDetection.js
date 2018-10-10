@@ -59,6 +59,7 @@ class FaceDetection {
 
   stop () {
     clearTimeout(this.loopTimer)
+    this.adapter.dispose()
     this.running = false
   }
 

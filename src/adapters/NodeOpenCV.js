@@ -1,5 +1,5 @@
 import io from 'socket.io-client'
-import uuid from 'uuid/v1'
+import uuid from 'uuid/v4'
 
 import Adapter from './Adapter'
 import { drawRect } from './utils'
@@ -36,6 +36,10 @@ class NodeOpenCVAdapter extends Adapter {
         reject(error)
       }
     })
+  }
+
+  dispose () {
+    this.socket.close()
   }
 
   setOverlay (source) {
