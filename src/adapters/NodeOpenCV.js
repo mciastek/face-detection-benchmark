@@ -1,11 +1,12 @@
 import io from 'socket.io-client'
+import uuid from 'uuid/v1'
 
 import Adapter from './Adapter'
 import { drawRect } from './utils'
 
 const DETECTION_OPTIONS = {
-  scaleFactor: 1.2,
-  minNeighbors: 6
+  scaleFactor: 1.1,
+  minNeighbors: 10
 }
 
 const MAX_WIDTH = 160
@@ -19,14 +20,16 @@ class NodeOpenCVAdapter extends Adapter {
 
     this.socket = null
     this.scale = 1
+    this.uuid = uuid()
   }
 
   prepare () {
     return new Promise((resolve, reject) => {
       try {
-        this.socket = io(window.location.href, {
+        this.socket = io(`/detection-${this.uuid}`, {
           path: '/ws'
         })
+
         this.setListener()
         resolve()
       } catch (error) {
@@ -64,6 +67,7 @@ class NodeOpenCVAdapter extends Adapter {
     super.process()
 
     const encodedPixels = this.getPixels(source)
+
     this.socket.emit('frame', {
       data: encodedPixels,
       options: DETECTION_OPTIONS

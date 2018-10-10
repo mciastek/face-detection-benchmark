@@ -22,4 +22,5 @@ server.listen(port, () => {
   console.log(`App listening on port ${port}!`)
 })
 
-io.on('connection', socketRoute)
+const namespacedSocket = io.of(/^\/detection-\S+$/)
+namespacedSocket.on('connection', socketRoute)
