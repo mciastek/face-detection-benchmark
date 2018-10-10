@@ -8,9 +8,28 @@ const MTCNN_PARAMS = {
   minFaceSize: 200
 }
 
+const modelFetcher = () => {
+  let loaded = false
+
+  return () => {
+    if (!loaded) {
+      return faceapi.loadMtcnnModel('/')
+        .then(() => {
+          loaded = true
+
+          return loaded
+        })
+    }
+
+    return Promise.resolve()
+  }
+}
+
+const fetchModel = modelFetcher()
+
 class FaceApiAdapter extends Adapter {
   prepare () {
-    return faceapi.loadMtcnnModel('/')
+    return fetchModel()
   }
 
   async process (source) {
