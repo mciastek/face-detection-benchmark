@@ -88,7 +88,7 @@ class ImagesUpload {
     const containerEl = document.createElement('div')
     const overlayEl = document.createElement('canvas')
 
-    figureEl.classList.add('images-upload__figure', 'col', 's3')
+    figureEl.classList.add('images-upload__figure')
     figCaptionEl.classList.add('images-upload__caption')
     overlayEl.classList.add('images-upload__overlay')
     containerEl.classList.add('images-upload__container')

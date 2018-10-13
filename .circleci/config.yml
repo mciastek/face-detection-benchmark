@@ -7,7 +7,7 @@ jobs:
       - checkout
 
       # build the application image
-      - run: docker build -t $CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME:$CIRCLE_BRANCH .
+      - run: docker build -t $CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME:$CIRCLE_SHA1 .
 
       # log to registry
       - run: docker login --username=_ --password=${HEROKU_TOKEN} registry.heroku.com

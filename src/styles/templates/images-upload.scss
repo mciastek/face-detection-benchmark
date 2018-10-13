@@ -1,13 +1,19 @@
 .images-upload {
   &__preview {
+    display: flex;
     min-height: 500px;
-    padding: 1.5rem;
+    padding: 15px;
     background-color: color('grey', 'lighten-4');
   }
 
+  &__row {
+    @include row-flex;
+  }
+
   &__figure {
-    margin: 0;
-    padding: 0;
+    @include column-flex(3);
+
+    margin: 15px 0;
 
     &.loading .images-upload__image {
       filter: grayscale(1);
