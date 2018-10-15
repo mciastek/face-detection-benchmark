@@ -19,6 +19,8 @@ body {
 }
 
 body {
+  display: flex;
+  flex-direction: column;
   font-family: $base-font-family;
   -webkit-font-smoothing: antialiased;
   font-weight: 400;
@@ -28,6 +30,7 @@ body {
 }
 
 main {
+  flex: 1 0 auto;
   padding: 48px 0;
 }
 
