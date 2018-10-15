@@ -25,6 +25,7 @@ class FaceDetection {
     this.running = false
 
     this.loopTimer = null
+    this.loopDelay = 0
   }
 
   init () {
@@ -54,7 +55,7 @@ class FaceDetection {
     }
 
     this.adapter.process(this.source)
-    this.loopTimer = setTimeout(this.runInLoop)
+    this.loopTimer = setTimeout(this.runInLoop, this.loopDelay)
   }
 
   stop () {
@@ -66,6 +67,9 @@ class FaceDetection {
   changeAdapter (Adapter, adapterOptions = this.options.adapterOptions) {
     this.stop()
     this.adapter = new Adapter(this.overlayEl, adapterOptions)
+
+    const { maxFps } = this.adapter.options
+    this.loopDelay = maxFps ? 1000 / maxFps : 0
 
     return this.init()
       .then(() => {

@@ -4,6 +4,8 @@ import uuid from 'uuid/v4'
 import Adapter from './Adapter'
 import { drawRect } from './utils'
 
+const { OPENCV_MAX_FPS } = process.env
+
 const DETECTION_OPTIONS = {
   scaleFactor: 1.1,
   minNeighbors: 10
@@ -14,6 +16,8 @@ const MAX_WIDTH = 160
 class NodeOpenCVAdapter extends Adapter {
   constructor (overlayEl, settings) {
     super(overlayEl, settings)
+
+    this.options.maxFps = OPENCV_MAX_FPS
 
     this.pixelsCanvas = document.createElement('canvas')
     this.pixelsCanvasCtx = this.pixelsCanvas.getContext('2d')
